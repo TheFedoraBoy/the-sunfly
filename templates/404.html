@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Page not found | The Sunfly{% endblock %}
+{% block content %}
+<div class="empty">
+  <img src="{% static 'paper/sunfly.svg' %}" alt="">
+  <h1 class="page-title">That page isn't here</h1>
+  <p>The address may be mistyped, or the essay may have been unpublished.</p>
+  <p><a class="button" href="{% url 'paper:home' %}">Read today's essay</a></p>
+</div>
+{% endblock %}

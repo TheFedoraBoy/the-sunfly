@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load paper_extras %}
+{% block title %}{{ person.name }} | The Sunfly{% endblock %}
+{% block description %}{{ person.name }}{% if person.title %}, {{ person.title }}{% endif %}, writes for The Sunfly.{% endblock %}
+
+{% block content %}
+<div class="profile">
+  {% include "paper/_portrait.html" %}
+  <div>
+    <h1 class="page-title">{{ person.name }}</h1>
+    {% if person.title %}<p class="role">{{ person.title }}</p>{% endif %}
+    {% if person.bio %}<div class="prose">{{ person.bio|markdown }}</div>{% endif %}
+  </div>
+</div>
+
+<h2 class="month">Essays by {{ person.name }}</h2>
+{% if essays %}
+<ol class="listing">
+  {% for essay in essays %}
+  <li>
+    <time class="day" datetime="{{ essay.publish_date|date:'Y-m-d' }}">{{ essay.publish_date|date:"j" }}<span class="weekday">{{ essay.publish_date|date:"M Y" }}</span></time>
+    <div>
+      <h3><a href="{{ essay.get_absolute_url }}">{{ essay.title }}</a></h3>
+      {% if essay.dek %}<p>{{ essay.dek }}</p>{% endif %}
+    </div>
+  </li>
+  {% endfor %}
+</ol>
+{% else %}
+<p>No essays published yet.</p>
+{% endif %}
+{% endblock %}

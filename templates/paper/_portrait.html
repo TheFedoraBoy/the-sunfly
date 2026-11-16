@@ -1,0 +1,3 @@
+{% load static %}{% comment %}
+  Usage: {% include "paper/_portrait.html" with person=person extra="small" %}
+{% endcomment %}{% if person.photo %}<span class="portrait photo {{ extra }}"><img src="{{ person.photo.url }}" alt="{% if not decorative %}Portrait of {{ person.name }}{% endif %}" loading="lazy"></span>{% else %}<span class="portrait bug {{ extra }}"><img src="{% static 'paper/sunfly.svg' %}" alt=""></span>{% endif %}

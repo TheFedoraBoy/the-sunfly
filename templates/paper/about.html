@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load paper_extras %}
+{% block title %}About | The Sunfly{% endblock %}
+
+{% block content %}
+<div class="essay">
+  <h1 class="page-title">About The Sunfly</h1>
+  {% if site.about %}
+  <div class="prose">{{ site.about|markdown }}</div>
+  {% else %}
+  <p class="page-intro">The Sunfly publishes one longform political essay a day.</p>
+  {% if user.is_staff %}<p><a class="button" href="{% url 'admin:paper_sitesettings_changelist' %}">Write the About page</a></p>{% endif %}
+  {% endif %}
+</div>
+{% endblock %}

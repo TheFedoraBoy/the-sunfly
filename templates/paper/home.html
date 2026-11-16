@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static paper_extras %}
+{% block title %}The Sunfly | {{ site.tagline }}{% endblock %}
+
+{% block content %}
+{% if lead %}
+<div class="front">
+  <article>
+    <span class="badge">{% if lead.publish_date == today %}Today's essay{% else %}Latest essay{% endif %}</span>
+    <h1 class="headline"><a href="{{ lead.get_absolute_url }}">{{ lead.title }}</a></h1>
+    {% if lead.dek %}<p class="dek">{{ lead.dek }}</p>{% endif %}
+    {% include "paper/_byline.html" with essay=lead %}
+    {% if lead.image %}
+    <figure class="figure">
+      <img src="{{ lead.image.url }}" alt="{{ lead.image_caption }}">
+    </figure>
+    {% endif %}
+    <div class="prose dropcap">
+      {{ lead.body|markdown|truncatewords_html:190 }}
+    </div>
+    <p><a class="button" href="{{ lead.get_absolute_url }}">Keep reading</a></p>
+  </article>
+
+  {% if earlier %}
+  <aside class="earlier" aria-labelledby="earlier-h">
+    <h2 id="earlier-h">Earlier essays</h2>
+    <ol>
+      {% for essay in earlier %}
+      <li>
+        <time datetime="{{ essay.publish_date|date:'Y-m-d' }}">{{ essay.publish_date|date:"l, F j" }}</time>
+        <a href="{{ essay.get_absolute_url }}">{{ essay.title }}</a>
+        <span class="by">{{ essay.author.name }}</span>
+      </li>
+      {% endfor %}
+    </ol>
+    <a class="all" href="{% url 'paper:archive' %}">See every past essay</a>
+  </aside>
+  {% endif %}
+</div>
+{% else %}
+<div class="empty">
+  <img src="{% static 'paper/sunfly.svg' %}" alt="">
+  <h1 class="page-title">The first essay is on its way</h1>
+  <p>Nothing has been published yet. Check back soon.</p>
+  {% if user.is_staff %}<p><a class="button" href="{% url 'admin:paper_article_add' %}">Write the first essay</a></p>{% endif %}
+</div>
+{% endif %}
+{% endblock %}

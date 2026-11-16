@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Past essays | The Sunfly{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Past essays</h1>
+{% if page.object_list %}
+<p class="page-intro">Every essay we have run, newest first.</p>
+{% regroup page.object_list by publish_date|date:"F Y" as months %}
+{% for month in months %}
+<h2 class="month">{{ month.grouper }}</h2>
+<ol class="listing">
+  {% for essay in month.list %}
+  <li>
+    <time class="day" datetime="{{ essay.publish_date|date:'Y-m-d' }}">{{ essay.publish_date|date:"j" }}<span class="weekday">{{ essay.publish_date|date:"l" }}</span></time>
+    <div>
+      <h3><a href="{{ essay.get_absolute_url }}">{{ essay.title }}</a></h3>
+      {% if essay.dek %}<p>{{ essay.dek }}</p>{% endif %}
+      <p class="by">By {{ essay.author.name }}</p>
+    </div>
+  </li>
+  {% endfor %}
+</ol>
+{% endfor %}
+
+{% if page.has_other_pages %}
+<nav class="pager" aria-label="Pages">
+  <span>{% if page.has_previous %}<a href="?page={{ page.previous_page_number }}">Newer essays</a>{% endif %}</span>
+  <span>{% if page.has_next %}<a href="?page={{ page.next_page_number }}">Older essays</a>{% endif %}</span>
+</nav>
+{% endif %}
+{% else %}
+<p class="page-intro">Nothing has been published yet. Past essays will collect here.</p>
+{% endif %}
+{% endblock %}

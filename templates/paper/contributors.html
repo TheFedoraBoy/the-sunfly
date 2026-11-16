@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load paper_extras %}
+{% block title %}Contributors | The Sunfly{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Contributors</h1>
+{% if people %}
+<p class="page-intro">The people who write The Sunfly.</p>
+<ul class="people">
+  {% for person in people %}
+  <li>
+    <a href="{{ person.get_absolute_url }}" tabindex="-1" aria-hidden="true">{% include "paper/_portrait.html" with decorative=True %}</a>
+    <h2><a href="{{ person.get_absolute_url }}">{{ person.name }}</a></h2>
+    {% if person.title %}<p class="role">{{ person.title }}</p>{% endif %}
+    {% if person.bio %}<div class="prose">{{ person.bio|markdown|truncatewords_html:40 }}</div>{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="page-intro">Contributor profiles have not been added yet.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load paper_extras %}
+{% block title %}{{ essay.title }} | The Sunfly{% endblock %}
+{% block description %}{{ essay.dek|default:site.tagline }}{% endblock %}
+{% block og_title %}{{ essay.title }}{% endblock %}
+{% block og_description %}{{ essay.dek|default:site.tagline }}{% endblock %}
+{% block og_extra %}<meta property="og:type" content="article">{% if essay.image %}
+  <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ essay.image.url }}">{% endif %}{% endblock %}
+
+{% block content %}
+<article class="essay">
+  {% if not essay.is_live %}
+  <span class="badge draft">{% if essay.status == 'draft' %}Draft, only you can see this{% else %}Scheduled for {{ essay.publish_date|date:"F j" }}, only you can see this{% endif %}</span>
+  {% endif %}
+  <h1 class="headline">{{ essay.title }}</h1>
+  {% if essay.dek %}<p class="dek">{{ essay.dek }}</p>{% endif %}
+  {% include "paper/_byline.html" %}
+  {% if essay.image %}
+  <figure class="figure">
+    <img src="{{ essay.image.url }}" alt="{{ essay.image_caption }}">
+    {% if essay.image_caption %}<figcaption>{{ essay.image_caption }}</figcaption>{% endif %}
+  </figure>
+  {% endif %}
+
+  <div class="prose dropcap">
+    {{ essay.body|markdown }}
+  </div>
+
+  <aside class="endnote" aria-label="About the author">
+    {% include "paper/_portrait.html" with person=essay.author decorative=True %}
+    <div>
+      <h2><a href="{{ essay.author.get_absolute_url }}">{{ essay.author.name }}</a></h2>
+      {% if essay.author.title %}<p class="role">{{ essay.author.title }}</p>{% endif %}
+      {% if essay.author.bio %}<div class="prose">{{ essay.author.bio|markdown|truncatewords_html:60 }}</div>{% endif %}
+    </div>
+  </aside>
+
+  {% if older or newer %}
+  <nav class="neighbours" aria-label="More essays">
+    {% if older %}<div><span>The day before</span><a href="{{ older.get_absolute_url }}">{{ older.title }}</a></div>{% endif %}
+    {% if newer %}<div class="next"><span>The day after</span><a href="{{ newer.get_absolute_url }}">{{ newer.title }}</a></div>{% endif %}
+  </nav>
+  {% endif %}
+</article>
+{% endblock %}

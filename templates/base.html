@@ -1,0 +1,63 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}The Sunfly{% endblock %}</title>
+  <meta name="description" content="{% block description %}{{ site.tagline }}{% endblock %}">
+  <meta property="og:site_name" content="The Sunfly">
+  <meta property="og:title" content="{% block og_title %}The Sunfly{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{{ site.tagline }}{% endblock %}">
+  {% block og_extra %}{% endblock %}
+  <link rel="icon" type="image/svg+xml" href="{% static 'paper/sunfly.svg' %}">
+  <link rel="alternate" type="application/rss+xml" title="The Sunfly" href="{% url 'paper:feed' %}">
+  <link rel="preload" href="{% static 'paper/fonts/bowlby-one-latin-400-normal.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{% static 'paper/site.css' %}">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to the essay</a>
+
+  <div class="strip">
+    <div class="wrap">
+      <span>{{ today|date:"l, F j, Y" }}</span>
+      <span class="tag">{{ site.tagline }}</span>
+    </div>
+  </div>
+
+  <header>
+    <div class="masthead">
+      <a href="{% url 'paper:home' %}" aria-label="The Sunfly, home">
+        <img src="{% static 'paper/sunfly.svg' %}" alt="" width="240" height="240">
+        <span class="name">The Sunfly</span>
+      </a>
+    </div>
+    <nav class="nav" aria-label="Sections">
+      <ul class="wrap">
+        {% with section=request.resolver_match.url_name %}
+        <li><a href="{% url 'paper:home' %}" {% if section == 'home' %}aria-current="page"{% endif %}>Today</a></li>
+        <li><a href="{% url 'paper:archive' %}" {% if section == 'archive' %}aria-current="page"{% endif %}>Past essays</a></li>
+        <li><a href="{% url 'paper:contributors' %}" {% if section == 'contributors' or section == 'contributor' %}aria-current="page"{% endif %}>Contributors</a></li>
+        <li><a href="{% url 'paper:about' %}" {% if section == 'about' %}aria-current="page"{% endif %}>About</a></li>
+        {% endwith %}
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main">
+    <div class="wrap">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <span>The Sunfly. {{ site.tagline }}</span>
+      <ul>
+        <li><a href="{% url 'paper:archive' %}">Past essays</a></li>
+        <li><a href="{% url 'paper:about' %}">About</a></li>
+        <li><a href="{% url 'paper:feed' %}">RSS</a></li>
+      </ul>
+    </div>
+  </footer>
+</body>
+</html>

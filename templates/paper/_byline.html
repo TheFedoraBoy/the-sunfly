@@ -1,0 +1,7 @@
+<div class="byline">
+  {% include "paper/_portrait.html" with person=essay.author extra="small" decorative=True %}
+  <div>
+    <div class="who">By <a href="{{ essay.author.get_absolute_url }}">{{ essay.author.name }}</a></div>
+    <div class="meta"><time datetime="{{ essay.publish_date|date:'Y-m-d' }}">{{ essay.publish_date|date:"F j, Y" }}</time>, {{ essay.reading_minutes }} minute read</div>
+  </div>
+</div>
