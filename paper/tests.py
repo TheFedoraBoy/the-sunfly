@@ -59,3 +59,25 @@ class ReaderPagesTests(TestCase):
         Contributor.objects.all().delete()
         for name in ("home", "archive", "contributors", "about"):
             self.assertEqual(self.client.get(reverse(f"paper:{name}")).status_code, 200, name)
+
+
+class AvatarTests(TestCase):
+    def test_avatar_replaces_photo_for_readers(self):
+        person = Contributor.objects.create(name="Bug Person", avatar="moth", photo="contributors/x.jpg")
+        html = self.client.get(person.get_absolute_url()).content.decode()
+        self.assertIn("paper/avatars/moth", html)
+        self.assertNotIn("contributors/x.jpg", html)
+
+    def test_every_avatar_choice_has_a_file(self):
+        from django.contrib.staticfiles import finders
+        from .models import AVATAR_CHOICES
+        for value, _label in AVATAR_CHOICES:
+            if value:
+                self.assertTrue(finders.find(f"paper/avatars/{value}.svg"), value)
+
+    def test_admin_form_shows_picker(self):
+        user = get_user_model().objects.create_superuser("ed2", password="pw-for-tests")
+        self.client.force_login(user)
+        html = self.client.get(reverse("admin:paper_contributor_add")).content.decode()
+        self.assertIn("paper/avatars/ladybug.svg", html)
+        self.assertIn('value="ladybug"', html)

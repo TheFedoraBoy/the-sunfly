@@ -1,0 +1,20 @@
+{% load static %}<style>
+  .sf-avatars { display: flex; flex-wrap: wrap; gap: 8px; max-width: 760px; }
+  .sf-avatar { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 92px;
+               padding: 6px 4px; border: 2px solid transparent; border-radius: 8px; cursor: pointer;
+               font-size: 12px; text-align: center; }
+  .sf-avatar:hover { border-color: var(--border-color, #ccc); }
+  .sf-avatar:has(input:checked) { border-color: #ff6a13; background: rgba(255,106,19,.08); }
+  .sf-avatar input { margin: 0; }
+  .sf-avatar img, .sf-avatar .none { width: 64px; height: 64px; }
+  .sf-avatar .none { display: grid; place-items: center; border: 2px dashed var(--border-color, #ccc); border-radius: 50%; }
+</style>
+<div class="sf-avatars"{% if widget.attrs.id %} id="{{ widget.attrs.id }}"{% endif %}>
+{% for group, options, index in widget.optgroups %}{% for option in options %}
+  <label class="sf-avatar" for="{{ option.attrs.id }}">
+    {% if option.value %}<img src="{% static 'paper/avatars/' %}{{ option.value }}.svg" alt="">{% else %}<span class="none">Photo</span>{% endif %}
+    {% include "django/forms/widgets/input.html" with widget=option %}
+    <span>{{ option.label }}</span>
+  </label>
+{% endfor %}{% endfor %}
+</div>

@@ -1,6 +1,9 @@
 from django.contrib import admin, messages
+from django.templatetags.static import static
 from django.utils import timezone
 from django.utils.html import format_html
+
+from .widgets import AvatarPicker
 
 from .models import Article, Contributor, SiteSettings
 
@@ -13,10 +16,18 @@ class ContributorAdmin(admin.ModelAdmin):
     search_fields = ("name", "title", "bio")
     prepopulated_fields = {"slug": ("name",)}
     readonly_fields = ("photo_preview",)
-    fields = ("name", "title", "photo", "photo_preview", "bio", "slug", "sort_order", "is_active")
+    fields = ("name", "title", "avatar", "photo", "photo_preview", "bio", "slug", "sort_order", "is_active")
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == "avatar":
+            kwargs["widget"] = AvatarPicker
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
     @admin.display(description="")
     def thumb(self, obj):
+        if obj.avatar:
+            return format_html('<img src="{}" alt="" style="width:40px;height:40px">',
+                               static(obj.avatar_path))
         if obj.photo:
             return format_html(
                 '<img src="{}" alt="" style="width:40px;height:40px;object-fit:cover;border-radius:50%">',
@@ -25,9 +36,15 @@ class ContributorAdmin(admin.ModelAdmin):
 
     @admin.display(description="Current photo")
     def photo_preview(self, obj):
+        if obj.avatar and obj.photo:
+            return format_html(
+                '<img src="{}" alt="" style="width:80px;height:80px;object-fit:cover;opacity:.5">'
+                '<br>Hidden from readers while a bug avatar is picked.', obj.photo.url)
         if obj.photo:
             return format_html(
                 '<img src="{}" alt="" style="width:160px;height:160px;object-fit:cover">', obj.photo.url)
+        if obj.avatar:
+            return "No photo. Readers see the bug avatar."
         return "No photo yet. Readers see the Sunfly bug instead."
 
     @admin.display(description="Essays")

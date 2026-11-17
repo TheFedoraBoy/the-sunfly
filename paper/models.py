@@ -16,6 +16,22 @@ def unique_slug(instance, source, max_length=80):
     return slug
 
 
+AVATAR_CHOICES = [
+    ("", "None, use the photo"),
+    ("sunfly", "Sunfly"),
+    ("ladybug", "Ladybug"),
+    ("butterfly", "Butterfly"),
+    ("moth", "Moth"),
+    ("dragonfly", "Dragonfly"),
+    ("ant", "Ant"),
+    ("firefly", "Firefly"),
+    ("stag-beetle", "Stag beetle"),
+    ("caterpillar", "Caterpillar"),
+    ("spider", "Spider"),
+    ("cicada", "Cicada"),
+]
+
+
 class Contributor(models.Model):
     """A writer shown to readers. Not a login account."""
 
@@ -26,6 +42,9 @@ class Contributor(models.Model):
                              help_text='Shown under the name, e.g. "Editor" or "Contributing writer".')
     photo = models.ImageField(upload_to="contributors/", blank=True,
                               help_text="A square photo works best. The site crops to a square either way.")
+    avatar = models.CharField(
+        "bug avatar", max_length=20, blank=True, choices=AVATAR_CHOICES,
+        help_text="If you pick a bug, readers see it instead of the photo.")
     bio = models.TextField(blank=True, help_text="Markdown is supported.")
     sort_order = models.PositiveIntegerField(
         default=100, help_text="Lower numbers appear first on the Contributors page.")
@@ -45,6 +64,11 @@ class Contributor(models.Model):
 
     def get_absolute_url(self):
         return reverse("paper:contributor", args=[self.slug])
+
+    @property
+    def avatar_path(self):
+        """Static path of the chosen bug, or None."""
+        return f"paper/avatars/{self.avatar}.svg" if self.avatar else None
 
 
 class ArticleQuerySet(models.QuerySet):
